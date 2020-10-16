@@ -69,6 +69,21 @@ describe('DB load', () => {
         expect(total.length).toBe(84);
         expect(total[30] instanceof Item).toBeTruthy();
     })
+    test('Restaurant should have menus.', async() => {
+        const restaurants = await Restaurant.findAll();
+        const menus = restaurants[2].menus;
+        expect(menus.length).toBe(4);
+    })
+    test('Menus should have items.', async () => {
+        const menu = await Menu.findAll();
+        const items = menu[0].items;
+        expect(items.length).toBe(3);
+    })
+    test('Restaurant should have menus that should have items and the item should have a price.', async () => {
+        const restaurants = await Restaurant.findAll();
+        // console.log(JSON.stringify(restaurants, '', 2));
+        console.log(restaurants[0].menus[0]);
+    })
     
     
 })
