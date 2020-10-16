@@ -1,6 +1,6 @@
 const db = require('./db');
 const loader = require('./loader');
-const {Restaurant} = require('./index');
+const {Restaurant, Menu, Item} = require('./index');
 // beforeAll(done => {
 //     db.exec(`
 //         CREATE TABLE restaurants(id INTEGER PRIMARY KEY, name TEXT);
@@ -54,5 +54,21 @@ describe('DB load', () => {
         expect(total[0] instanceof Restaurant).toBeTruthy();
         expect(total.length).toBe(9);
     })
+    test('should be able to get all the menus.', async () => {
+        let total = await Menu.findAll();
+        expect(total.length).toBe(18);
+        const newMenu = await new Menu({title: "TestMenu", restaurant_id: 3});
+        total = await Menu.findAll();
+        expect(total.length).toBe(19);
+        expect(total[12] instanceof Menu).toBeTruthy();
+        expect(total[1].title).toBe('Lunch Menu');
+    });
+
+    test('should be able to get all items', async () => {
+        let total = await Item.findAll();
+        expect(total.length).toBe(84);
+        expect(total[30] instanceof Item).toBeTruthy();
+    })
+    
     
 })

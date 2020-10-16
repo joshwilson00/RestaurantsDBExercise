@@ -42,19 +42,74 @@ class Restaurant {
         restaurant.id = data.id;
         restaurant.name = data.name;
         restaurant.imgURL = data.imgURL;
-        console.log(restaurant);
         if (restaurant.id) {return Promise.resolve(restaurant)};
         return new Promise((resolve, reject) =>{
             db.run('INSERT INTO restaurants(name, imgURL) VALUES(?,?)', [restaurant.name, restaurant.imgURL], function(err){
                 if(err) reject(err);
                 restaurant.id = this.lastID;
-                console.log(`Added to DB with ID: ${restaurant.id}`);
+                console.log(`Added to restaurant with ID: ${restaurant.id}`);
                 resolve(restaurant);
             })
         })
     }    
 }
 
-module.exports = {Restaurant};
+class Menu {
+    static findAll(){
+        return new Promise((resolve, reject) =>{
+            db.all('SELECT * FROM menus', async function(err, rows){
+                if (err) throw new Error(err);
+                const menus = await Promise.all(rows.map(row => new Menu(row)));
+                resolve(menus);
+            })
+        });
+    }
+    constructor(data){
+        const menu = this;
+        menu.id = data.id;
+        menu.title = data.title;
+        menu.restaurant_id = data.restaurant_id;
+
+        if (menu.id) {return Promise.resolve(menu)};
+        return new Promise((resolve, reject) =>{
+            db.run('INSERT INTO menus(title, restaurant_id) VALUES (?,?);', [menu.title, menu.restaurant_id], function (err){
+                if (err) throw new Error(err);
+                menu.id = this.lastID;
+                console.log(`Menu added with ID: ${menu.id}`);
+                resolve(menu);
+            });
+        })
+    }
+}
+
+class Item {
+    static findAll(){
+        return new Promise((resolve, reject) =>{
+            db.all('SELECT * FROM items', async function(err, rows){
+                if (err) throw new Error(err);
+                const items = await Promise.all(rows.map(row => new Item(row)));
+                resolve(items);
+            })
+        });
+    }
+    constructor(data){
+        const item = this;
+        item.id = data.id;
+        item.name = data.name;
+        item.price = data.price;
+        item.menu_id = data.menu_id;
+
+        if (item.id) {return Promise.resolve(item)};
+        return new Promise((resolve, reject) =>{
+            db.run('INSERT INTO items(name, menu_id) VALUES (?,?,?);', [item.name, item.price, item.menu_id], function (err){
+                if (err) throw new Error(err);
+                item.id = this.lastID;
+                console.log(`Item added with ID: ${item.id}`);
+                resolve(item);
+            });
+        })
+    }
+}
+module.exports = {Restaurant, Menu, Item};
 
 
